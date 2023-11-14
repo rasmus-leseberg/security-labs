@@ -2,20 +2,20 @@
 ---
 ### Contents
 
-1. [OWASP Top 10 2021](#owasp-top-10-2021)
-2. [OWASP Broken Access Control](#owasp-broken-access-control)
-3. [Classic DevSecOps pipeline](#classic-devsecops-pipeline)
-4. [Cloud-native DevSecOps pipeline](#cloud-native-devsecops-pipeline)
-5. [Splunk: Exploring SPL](#splunk-exploring-spl)
-6. [Microsoft Sentinel Lab](#microsoft-sentinel-lab)
-7. [Intro to Endpoint Security](#intro-to-endpoint-security)
-8. [Wazuh](#wazuh)
-9. [Active Directory Basics](#active-directory-basics)
-10. [Enumerating Active Directory](#enumerating-active-directory)
-11. [Active Directory Hardening](#active-directory-hardening)
-12. [NTLM leak via Outlook](#ntlm-leak-via-outlook)
-13. [CVE-2022-26923 AD Certificate Services](#cve-2022-26923-ad-certificate-services)
-14. [AttacktiveDirectory](#attacktivedirectory)
+✅ 1. [OWASP Top 10 2021](#owasp-top-10-2021)
+✅ 2. [OWASP Broken Access Control](#owasp-broken-access-control)
+   3. [Classic DevSecOps pipeline](#classic-devsecops-pipeline)
+   4. [Cloud-native DevSecOps pipeline](#cloud-native-devsecops-pipeline)
+✅ 5. [Splunk: Exploring SPL](#splunk-exploring-spl)
+   6. [Microsoft Sentinel Lab](#microsoft-sentinel-lab)
+   7. [Intro to Endpoint Security](#intro-to-endpoint-security)
+   8. [Wazuh](#wazuh)
+   9. [Active Directory Basics](#active-directory-basics)
+   10. [Enumerating Active Directory](#enumerating-active-directory)
+   11. [Active Directory Hardening](#active-directory-hardening)
+   12. [NTLM leak via Outlook](#ntlm-leak-via-outlook)
+   13. [CVE-2022-26923 AD Certificate Services](#cve-2022-26923-ad-certificate-services)
+   14. [AttacktiveDirectory](#attacktivedirectory)
 
 ---
 ## OWASP Top 10 2021
@@ -324,10 +324,10 @@ Time stamps being applie: `4/15/22 8:05:00.000 AM - 4/15/22 8:06:00.000 AM`
 
 Used queries:
 
-`index=Windowslogs EventID="1" AND User=*James*`
-`index=Windowslogs DestinationIp="172.18.39.6" AND DestinationPort="135"`
-`index=windowslogs  Hostname="Salena.Adam" DestinationIp="172.18.38.5"`
-`index=windowslogs* cyber`
+    - index=Windowslogs EventID="1" AND User=*James*
+    - index=Windowslogs DestinationIp="172.18.39.6" AND DestinationPort="135"
+    - index=windowslogs  Hostname="Salena.Adam" DestinationIp="172.18.38.5"
+    - index=windowslogs* cyber
 
 
 
