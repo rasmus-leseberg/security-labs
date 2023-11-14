@@ -8,8 +8,8 @@
 4. [Cloud-native DevSecOps pipeline](#cloud-native-devsecops-pipeline)
 5. ✅ [Splunk: Exploring SPL](#splunk-exploring-spl)
 6. [Microsoft Sentinel Lab](#microsoft-sentinel-lab)
-7. [Intro to Endpoint Security](#intro-to-endpoint-security)
-8. [Wazuh](#wazuh)
+7. ✅ [Intro to Endpoint Security](#intro-to-endpoint-security)
+8. ✅ [Wazuh](#wazuh)
 9. [Active Directory Basics](#active-directory-basics)
 10. [Enumerating Active Directory](#enumerating-active-directory)
 11. [Active Directory Hardening](#active-directory-hardening)
@@ -19,7 +19,7 @@
 
 ---
 ## OWASP Top 10 2021
-![owasp](./assets/images/owasp.png)
+![owasp](./assets/images/owasp_2021.png)
 
 ### Broken Access Control
 
@@ -191,7 +191,7 @@ By changing the value for the `server=secure-file-storage` to localhost, it was 
 ```
 <attackbox>:8087/download?server=0.0.0.0:8087&id=75482342
 ```
-
+[Back to top](#contents)
 ---
 ### OWASP Broken Access Control
 
@@ -273,12 +273,15 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 
 
 Developers should sanitize and validate user input, and avoid using insecure functions or libraries.
 
+[Back to top](#contents)
 ---
 ### Classic DevSecOps pipeline
 
+[Back to top](#contents)
 ---
 ### Cloud-native DevSecOps pipeline
 
+[Back to top](#contents)
 ---
 ### Splunk: Exploring SPL
 ![spl](./assets/images/splunk_spl.png)
@@ -336,19 +339,19 @@ Used queries:
 
 |  Command  |           Example           |                                    Explanation                                    |
 |:---------:|:---------------------------:|:---------------------------------------------------------------------------------:|
-| fields    | fields + HostName - EventID | Fields command is used to add or remove mentioned fields from the search results. |
+| fields    | fields + HostName - EventID | Used to add or remove mentioned fields from the search results.                   |
 | search    | search "Powershell"         | This command is used to search for the raw text                                   |
 | rename    | rename User as Employees    | It allows us to change the name of the field                                      |
-| dedup     |        dedup EventID        | The command used to remove duplicate fields from the search results               |
-| head      |           head 20           | First 20 rows                                                                     |
-| table     |              -              | Creates a table of the results                                                    |
-| tail      |           tail 20           | Last 20 rows                                                                      |
-| sort      |        sort Hostname        | sorts on category                                                                 |
-| reverse   |              -              | reverses order of events                                                          |
+| dedup     | dedup EventID               | The command used to remove duplicate fields from the search results               |
+| head      | head 20                     | First 20 rows                                                                     |
+| table     | -                           | Creates a table of the results                                                    |
+| tail      | tail 20                     | Last 20 rows                                                                      |
+| sort      | sort Hostname               | sorts on category                                                                 |
+| reverse   | -                           | reverses order of events                                                          |
 | top       | top 10                      | Top 10 results                                                                    |
 | rare      | rare limit=3 EventID        | Opposite of top                                                                   |
 | highlight | highlight User, host        | Shows the results in raw events mode with fields highlighted                      |
-| chart     | \| chart count by User      | Used to transform the data into tables or visualizations                          |
+| chart     | chart count by User         | Used to transform the data into tables or visualizations                          |
 | timechart | timechart count by Image    | Returns the time series chart covering the field. Often combined with STATS       |
 
 #### Stats
@@ -361,30 +364,111 @@ Used queries:
 | Sum     | It will return the sum of the fields in a specific value. | stats sum(field_name)             | stats sum(product_cost)  |
 | Count   | The count command returns the number of data occurrences. | stats count(function) AS new_NAME | stats count(source_IP)   |
 
+#### [Back to top](#contents)
 ---
 ### Microsoft Sentinel Lab
 
+[Back to top](#contents)
 ---
 ### Intro to Endpoint Security
+![endpoint_sec](./assets/images/endpoint_sec.png)
 
+This room gives an overview of determining a malicious activity from an endpoint and mapping its related events. The room covers:
+
+* Endpoint Security Fundamentals
+* Endpoint Logging and Monitoring
+* Endpoint Log Analysis
+
+#### Core Windows Processes
+Some core windows processes can be monitored with `Task Manager`, some of the normal running processes are:
+Note: ">" symbol represents a parent-child relationship. `System (Parent) > smss.exe (Child)`
+
+    - System
+    - System > smss.exe
+    - csrss.exe
+    - wininit.exe
+    - wininit.exe > services.exe
+    - wininit.exe > services.exe > svchost.exe
+    - lsass.exe
+    - winlogon.exe
+    - explorer.exe
+
+#### Sysinternals
+Sysinternal tools are a compilation of over 70+ windows-based tools. The most used tools are `TCPView` and `Process Explorer`, but others include:
+
+    - File and Disk Utilities
+    - Networking Utilities
+    - Process Utilities
+    - Security Utilities
+    - System Information
+    - Miscellaneous
+
+**TCPView:** Is a Windows Program that shows a listing of all `TCP` and `UDP` endpoints on the system, including local and remote addresses and state. It provides a more informatie subset of the `netstat` program, and includes `Tcpvcon`, a CLI version.
+
+**Process Explorer:** Consists of two windows; the top window show currently active processes, and the bottom window depends on the mode that the eplorer is in. In `handle`, the handles that the selected processes have openend will be displayed, in `DLL` mode, the DLL's and moemory-mapped files are visible.
+
+#### Windows Event Logs
+Event log data can be translated into XML using the Windows API. The events in these files are stored in a proprietary binary format with a `.evt` or `.evtx` extension, which typically reside in `C:\Windows\System32\winevt\Logs`. The three main ways of accessing these event logs are through:
+
+* **Event Viewer** (GUI)
+* **Wevtutil.exe** (CLI)
+* **Get-WinEvent** (PS1)
+
+#### Sysmon
+Is a tool commonly used by enterprises as part of their monitoring solutions. Sysmon is similar to Windows Event Logs but with more detail. It gathers logsand identifies anomalies, which makes it suitable for `SIEM`. Lastly, `Sysmon` includes 27 types of EventID's, which can be used within the required configuration files to specify how events should be handled and analyzed. 
+
+#### OSQuery
+An Open-Source tool created by Facebook. Security Analysts, Incident Responders, and Threat Hunters can query an endpoint (or multiple) using `SQL`. Compatible with Windows, Linux, macOS, FreeBSD. `osqueryi` is the CLI command to get started. An example command would be:
+
+```sql
+select pid,name,path from processes where name='lsass.exe';
+```
+
+#### Wazuh
+Wazuh is an open-source, freely-available, scalable, and extensive EDR solution. It operates on a management and agent model where a dedicated manager device is responsible for managinhg installed agents on other devices. And EDR (Endpoint detection and response) tool can typically:
+
+* Audit a device for common vulnerabilities
+* Proactively monitor a device for suspicious activity
+* Visualize complex data
+* Record a device's normal oeprating behaviour
+
+#### Event Correlation
+Identifies significant relationships from multiple log sources, such as application logs, endpoint logs, and network logs. For example, a network connection log may exist in various log sources such as Sysmon logs (Event ID 3: Network Connection) and Firewall Logs. Event Correlation can help to connect the dots in an incident investigation.
+
+#### Baselining
+The process of knowing whats is expected to be normal. It requires a vast amount of data gatherin to establish the standard behaviour of user activities and netowk traffic.
+
+In conclusion, this room covers the basic concepts of Endpoint Security Monitoring:
+
+    - Endpoint Security Fundamentals tackled Core Windows Processes and Sysinternals.
+    - Endpoint Logging and Monitoring introduced logging functionalities such as Windows Event Logging and Sysmon and monitoring/investigation tools such as OSQuery and Wazuh.
+    - Endpoint Log Analysis highlighted the importance of having a methodology such as baselining and event correlation.
+    
+[Back to top](#contents)
 ---
 ### Wazuh
 
+[Back to top](#contents)
 ---
 ### Active Directory Basics
 
+[Back to top](#contents)
 ---
 ### Enumerating Active Directory
 
+[Back to top](#contents)
 ---
 ### Active Directory Hardening
 
+[Back to top](#contents)
 ---
 ### NTLM leak via Outlook
 
+[Back to top](#contents)
 ---
 ### CVE-2022-26923 AD Certificate Services
 
+[Back to top](#contents)
 ---
 ### AttacktiveDirectory
 
