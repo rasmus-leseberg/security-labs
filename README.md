@@ -1,4 +1,5 @@
-# Security Expert Labs
+<img src="./assets/images/banner.png" alt="drawing" width="100%"/>
+# Security Expert Labs Documentation
 ---
 ### Contents
 
@@ -191,7 +192,8 @@ By changing the value for the `server=secure-file-storage` to localhost, it was 
 ```
 <attackbox>:8087/download?server=0.0.0.0:8087&id=75482342
 ```
-[Back to top](#contents)
+#### [Back to top](#contents)
+
 ---
 ### OWASP Broken Access Control
 
