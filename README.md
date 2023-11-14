@@ -281,6 +281,55 @@ Developers should sanitize and validate user input, and avoid using insecure fun
 
 ---
 ### Splunk: Exploring SPL
+![spl](./assets/images/splunk_spl.png)
+
+Splunk is a powerful `SIEM solution` that provides the ability to search and explore machine data. **Search Processing Language (SPL)** is used to make the search more effective. It comprises various functions and commands used together to form complex yet effective search queries.
+
+**Search & Reporting App** is the default interface used to search and analyze the data on the Splunk Home page.
+
+1) **Search Head:** Search processing language queries to look for the data.
+
+2) **Time Duration:** provides multiple options to select the time duration for the search. All-time will display the events in real-time.
+
+3) **Search History:** saves the search queries that the user has run in the past along with the time when it was run. It lets the user click on the past searches and look at the result.
+
+4) **Data Summary:** provides a summary of the data type, the data source, and the hosts that generated the events.
+
+5) **Field Sidebar:** has two sections showing selected fields and interesting fields. Also provides quick results, such as top values and raw values against each field. Contains categories such as: `Interesting fields`, `Selected fields`, `Alpha-numeric fields` (that the field contains text values), `Numeric Fields '#'`, `Count`.
+
+#### Practical
+
+Index being used: `index=Windowslogs`
+
+Time stamps being applie: `4/15/22 8:05:00.000 AM - 4/15/22 8:06:00.000 AM`
+
+#### SPL Operators
+
+| Field Name               | Operator                          | Example                   |
+|--------------------------|-----------------------------------|---------------------------|
+| Equal                    | =                                 | UserName=Mark             |
+| Not Equal to             | !=                                | UserName!=Mark            |
+| Less than                | <                                 | Age < 10                  |
+| Less than or Equal to    | <=                                | Age <= 10                 |
+| Greater than             | >                                 | Outbound_traffic > 50 MB  |
+| Greater Than or Equal to | >=                                | Outbound_traffic >= 50 MB |
+| NOT                      | field_A NOT value                 |                           |
+| OR                       | field_A=value1 OR field_A=value2  |                           |
+| AND                      | field_A=value1 AND field_B=value2 |                           |
+
+**Example 1:** `index=windowslogs AccountName !=SYSTEM`
+**Example 2:** `index=windowslogs AccountName !=SYSTEM AND AccountName=James`
+
+**Practical**
+
+Used queries:
+
+`index=Windowslogs EventID="1" AND User=*James*`
+`index=Windowslogs DestinationIp="172.18.39.6" AND DestinationPort="135"`
+`index=windowslogs  Hostname="Salena.Adam" DestinationIp="172.18.38.5"`
+`index=windowslogs* cyber`
+
+
 
 ---
 ### Microsoft Sentinel Lab
