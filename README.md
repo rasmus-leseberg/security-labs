@@ -318,18 +318,48 @@ Time stamps being applie: `4/15/22 8:05:00.000 AM - 4/15/22 8:06:00.000 AM`
 | AND                      | field_A=value1 AND field_B=value2 |                           |
 
 **Example 1:** `index=windowslogs AccountName !=SYSTEM`
+
 **Example 2:** `index=windowslogs AccountName !=SYSTEM AND AccountName=James`
 
-**Practical**
+#### Practical
 
 Used queries:
 
     - index=Windowslogs EventID="1" AND User=*James*
     - index=Windowslogs DestinationIp="172.18.39.6" AND DestinationPort="135"
-    - index=windowslogs  Hostname="Salena.Adam" DestinationIp="172.18.38.5"
+    - index=windowslogs Hostname="Salena.Adam" DestinationIp="172.18.38.5"
     - index=windowslogs* cyber
+    - index=windowslogs | table _time EventID Hostname SourceName | reverse
+    - index=windowslogs | fields + host + User + SourceIp
 
+#### Filtering
 
+|  Command  |           Example           |                                    Explanation                                    |
+|:---------:|:---------------------------:|:---------------------------------------------------------------------------------:|
+| fields    | fields + HostName - EventID | Fields command is used to add or remove mentioned fields from the search results. |
+| search    | search "Powershell"         | This command is used to search for the raw text                                   |
+| rename    | rename User as Employees    | It allows us to change the name of the field                                      |
+| dedup     |        dedup EventID        | The command used to remove duplicate fields from the search results               |
+| head      |           head 20           | First 20 rows                                                                     |
+| table     |              -              | Creates a table of the results                                                    |
+| tail      |           tail 20           | Last 20 rows                                                                      |
+| sort      |        sort Hostname        | sorts on category                                                                 |
+| reverse   |              -              | reverses order of events                                                          |
+| top       | top 10                      | Top 10 results                                                                    |
+| rare      | rare limit=3 EventID        | Opposite of top                                                                   |
+| highlight | highlight User, host        | Shows the results in raw events mode with fields highlighted                      |
+| chart     | \| chart count by User      | Used to transform the data into tables or visualizations                          |
+| timechart | timechart count by Image    | Returns the time series chart covering the field. Often combined with STATS       |
+
+#### Stats
+
+| Command | Explanation                                               | Syntax                            | Example                  |
+|---------|-----------------------------------------------------------|-----------------------------------|--------------------------|
+| Average | Used to calculate the average of the given field.         | stats avg(field_name)             | stats avg(product_price) |
+| Max     | It will return the maximum value from the specific field. | stats max(field_name)             | stats max(user_age)      |
+| Min     | It will return the minimum value from the specific field. | stats min(field_name)             | stats min(product_price) |
+| Sum     | It will return the sum of the fields in a specific value. | stats sum(field_name)             | stats sum(product_cost)  |
+| Count   | The count command returns the number of data occurrences. | stats count(function) AS new_NAME | stats count(source_IP)   |
 
 ---
 ### Microsoft Sentinel Lab
