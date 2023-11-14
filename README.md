@@ -273,15 +273,20 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 
 
 Developers should sanitize and validate user input, and avoid using insecure functions or libraries.
 
-[Back to top](#contents)
+#### [Back to top](#contents)
+
 ---
 ### Classic DevSecOps pipeline
 
-[Back to top](#contents)
+
+#### [Back to top](#contents)
+
 ---
 ### Cloud-native DevSecOps pipeline
 
-[Back to top](#contents)
+
+#### [Back to top](#contents)
+
 ---
 ### Splunk: Exploring SPL
 ![spl](./assets/images/splunk_spl.png)
@@ -368,7 +373,8 @@ Used queries:
 ---
 ### Microsoft Sentinel Lab
 
-[Back to top](#contents)
+
+#### [Back to top](#contents)
 ---
 ### Intro to Endpoint Security
 ![endpoint_sec](./assets/images/endpoint_sec.png)
@@ -443,32 +449,105 @@ In conclusion, this room covers the basic concepts of Endpoint Security Monitori
     - Endpoint Security Fundamentals tackled Core Windows Processes and Sysinternals.
     - Endpoint Logging and Monitoring introduced logging functionalities such as Windows Event Logging and Sysmon and monitoring/investigation tools such as OSQuery and Wazuh.
     - Endpoint Log Analysis highlighted the importance of having a methodology such as baselining and event correlation.
-    
-[Back to top](#contents)
+
+#### [Back to top](#contents)
+
 ---
 ### Wazuh
+![wazuh](./assets/images/wazuh.png)
 
-[Back to top](#contents)
+Wazuh operates on a management and agent model where the manager is responsible for managing agents installed on the devices you’d like to monitor. Devices that records the events and processes of a systems are called agents, and offload these to the manager (Wazuh)
+
+To deploy new agents:
+
+```
+Wazuh -> Agents -> Deploy New Agent
+```
+
+Wazuh’s Vulnerability Assessment module is a powerful tool that can be used to periodically scan an agent's operating system for installed applications and their version numbers. Once this information has been gathered, it is sent back to the Wazuh server and compared against a database of CVEs. Wazuh is also capable of testing an agent's configuration against certain rulesets to check for compliance. 
+
+![wazuh_events](./assets/images/wazuh_events.png)
+
+Wazuh is capable of auditing and monitoring an agent's configuration whilst proactively recording event logs. When the Wazuh agent is installed, an audit is performed where a metric is given using multiple frameworks and legislations such as NIST, MITRE and GDPR. 
+
+Wazuh alert logs are typically stored in `/var/ossec/logs/alerts/alerts.log`, and these can be searched manually with grep through CLI. 
+
+We can use the Wazuh agent to aggregate these events recorded by Sysmon for processing to the Wazuh manager. We can use the Wazuh agent to aggregate these events recorded by Sysmon for processing to the Wazuh manager. Sysmon uses rules that are made in XML formatting to be triggered, so `Sysmon64.exe -accepteula -i detect_powershell.xml` needs to be executed to set yp the configuration.
+
+#### Linux
+Wazuh comes with many rules that enable Wazuh to analyze log files and can be found in /var/ossec/ruleset/rules. Some common applications include:
+
+    Docker
+    FTP
+    WordPress
+    SQL Server
+    MongoDB
+    Firewalld
+    And many, many more (approximately 900).
+
+However, you can always make your own rules. In the room task, Wazuh digests Apache2 logs using the `0250-apache_rules.xml` ruleset.
+
+#### Auditing Commands
+Wazuh utilizes the `auditd` package, which monitors the system for certain events and writes this to a log file. To install:
+
+```sh
+sudo apt-get install auditd audispd-plugins
+sudo systemctl enable auditd.service
+sudo systemctl start auditd.service
+sudo auditctl -R /etc/audit/rules.d/audit.rules
+```
+
+The rules are located in `/etc/audit/rules.d/audit.rules`
+
+#### Using your own Client
+
+The Wazuh API allows interaction with the management server. Some initial setup has to be done for this:
+
+```sh
+TOKEN=$(curl -u : -k -X GET "https://WAZUH_MANAGEMENT_SERVER_IP:55000/security/user/authenticate?raw=true")
+curl -k -X GET "https://10.10.120.12:55000/" -H "Authorization: Bearer $TOKEN"
+curl -k -X GET "https://10.10.120.12:55000/manager/status?pretty=true" -H "Authorization: Bearer $TOKEN" 
+curl -k -X GET "https://10.10.120.12:55000/manager/configuration?pretty=true§ion=global" -H "Authorization: Bearer $TOKEN"
+```
+
+To interact with an agent:
+
+```sh
+curl -k -X GET "https://10.10.120.12:55000/agents?pretty=true&offset=1&limit=2&select=status%2Cid%2Cmanager%2Cname%2Cnode_name%2Cversion&status=active" -H "Authorization: Bearer $TOKEN"
+```
+
+#### Reports and Sample Data
+Reports can be generated under `Wazuh --> Modules --> Security Events --> Generate Report`, and these can be downloaded afterwards. 
+
+Sample Data can be loaded into Wazuh under `Wazuh --> Settings --> Sample Data --> Add Data`
+
+#### [Back to top](#contents)
+
 ---
 ### Active Directory Basics
 
-[Back to top](#contents)
+#### [Back to top](#contents)
+
 ---
 ### Enumerating Active Directory
 
-[Back to top](#contents)
+#### [Back to top](#contents)
+
 ---
 ### Active Directory Hardening
 
-[Back to top](#contents)
+#### [Back to top](#contents)
+
 ---
 ### NTLM leak via Outlook
 
-[Back to top](#contents)
+#### [Back to top](#contents)
+
 ---
 ### CVE-2022-26923 AD Certificate Services
 
-[Back to top](#contents)
+#### [Back to top](#contents)
+
 ---
 ### AttacktiveDirectory
 
