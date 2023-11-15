@@ -12,7 +12,7 @@
 6. [Microsoft Sentinel Lab](#microsoft-sentinel-lab)
 7. ✅ [Intro to Endpoint Security](#intro-to-endpoint-security)
 8. ✅ [Wazuh](#wazuh)
-9. [Active Directory Basics](#active-directory-basics)
+9. ✅ [Active Directory Basics](#active-directory-basics)
 10. [Enumerating Active Directory](#enumerating-active-directory)
 11. [Active Directory Hardening](#active-directory-hardening)
 12. [NTLM leak via Outlook](#ntlm-leak-via-outlook)
@@ -373,11 +373,13 @@ Used queries:
 | Count   | The count command returns the number of data occurrences. | stats count(function) AS new_NAME | stats count(source_IP)   |
 
 #### [Back to top](#contents)
+
 ---
 ### Microsoft Sentinel Lab
 
 
 #### [Back to top](#contents)
+
 ---
 ### Intro to Endpoint Security
 ![endpoint_sec](./assets/images/endpoint_sec.png)
@@ -528,6 +530,85 @@ Sample Data can be loaded into Wazuh under `Wazuh --> Settings --> Sample Data -
 
 ---
 ### Active Directory Basics
+![ad_basics](./assets/images/winadbasics.png)
+
+Microsoft's Active Directory is the backbone of the corporate world. It simplifies the management of devices and users within a corporate environment. A Windows domain is a group of users and computers under the administration of a given business. The main idea behind a domain is to centralise the administration of common components of a Windows computer network in a single repository called Active Directory (AD). The server that runs the Active Directory services is known as a Domain Controller (DC).
+
+The main advantages of having a configured Windows domain are:
+
+    * Centralised identity management
+    * Managing security policies
+
+
+The core of any Windows domain is the `Active Directory Domain Service (ADDS)`.
+
+**Users** are common object types, also known as one of the security principal objects in an AD, meaning that they can be authenticated and assigned privileges. Users can be either:
+
+    * People
+    * Services: like IIS or MSSQL. Requires a user to run, but will only have specific service-oriented privileges.
+
+**Machines:** For every computer that joins, a machine object and account will be created. The rights within that account are limiteed, but the accounts themselves are local administrators on the assigned computer. Passwords are random 120 char passes and automatically rotated. The account name is the computer's name followed by a dollar sign, like `DC01$`.
+
+**Security Groups:** Several groups are created by default in a domain, the most important ones are:
+
+    - Domain Admins      --> Admin privileges over entire domain
+    - Server Operators   --> Can administer DC's. Cannot change admin group memberships
+    - Backup Operators   --> Are allowed to access any file, are used to perform backups
+    - Account Operators  --> Can create or modify other accounts
+    - Domain Users       --> All existing users in a domain
+    - Domain Computers   --> All existing computers in a domain
+    - Domain Controllers --> All existing DC's in a domain
+
+**OU's** are handy for `applying policies` to users and computers, specific for role-based purposes. **SG's** are used to `grat permissions over resources`
+
+#### Practical
+
+**Delegating Control** in AD to a specific OU can be done in 
+
+`OU Right click --> Delegate Control --> Add --> <Name> --> Set Permissions --> Finish`
+
+With a PS1 command the password can be reset for a specific user, granted the permission is in order:
+
+```sh
+Set-ADAccountPassword sophie -Reset -NewPassword (Read-Host -AsSecureString -Prompt 'New Password') -Verbose
+Set-ADUser -ChangePasswordAtLogon $true -Identity sophie -Verbose
+```
+
+#### Managing Computers in AD
+
+Generally it is advised to divide the devices into three different categories:
+
+    * Workstations
+    * Servers
+    * Domain Controllers
+
+#### Group Policies
+
+The idea is to deplo different policies for each OU individually. These policies are managed through `Group Policy Objects (GPO)`. The name of the network share that distributes GPOs to domain machines is the `SYSVOL` volume. 
+
+When using Windows domains, all credentials are stored in the Domain Controllers. There are two protocols for network authentication:
+
+    - Kerberos: default
+    - NetNTLM: legacy
+
+#### Kerberos
+The user sends their username and a timestamp encrypted using a key derived from their `Key Distribution Center (KDC)`. The KDC will create and send back a `Ticket Granting Ticket (TGT)`, along with a `Session Key`. It is essential to know that the encrypted TGT includes a copy of the Session Key as part of its contents, and the KDC has no need to store the Session Key as it can recover a copy by decrypting the TGT if needed.
+
+When a user wants to connect to a service, they will use the TGT to receive a `Ticket Granting Service (TGS)`. To request a TGS, the user will send their username and a timestamp encrypted using the Session Key, along with the TGT and a `Service Principal Name (SPN)`, which indicates the service and server name we intend to access.
+
+As a result, the KDC will send us a TGS along with a `Service Session Key`, which we will need to authenticate to the service we want to access. The TGS is encrypted using a key derived from the `Service Owner Hash`. The Service Owner is the user or machine account that the service runs under. The TGS contains a copy of the Service Session Key on its encrypted contents so that the Service Owner can access it by decrypting the TGS.
+
+The TGS can then be sent to the desired service to authenticate and establish a connection. The service will use its configured account's password hash to decrypt the TGS and validate the Service Session Key.
+
+![kerberos](./assets/images/kerberos.png)
+
+#### NetNTLM
+
+![netntlm](./assets/images/netntlm.png)
+
+#### Trees Forests, and Trust Relationships
+
+Having multiple domains organised in trees and forest allows a compartmentalised network in terms of management and resources. If a domain in one tree wants access to a domain in another tree, a `trust relationship` has to be made first. These relationships can either be `one-way` or `two-way`. 
 
 #### [Back to top](#contents)
 
@@ -553,5 +634,7 @@ Sample Data can be loaded into Wazuh under `Wazuh --> Settings --> Sample Data -
 
 ---
 ### AttacktiveDirectory
+
+The Kerberos flow is explained [here](#kerberos).
 
 #### [Back to top](#contents)
