@@ -1,4 +1,4 @@
-<img src="./assets/images/banner.jpg" alt="banner" width="100%"/>
+<img src="./assets/images/banner.png" alt="banner" width="100%"/>
 
 # Security Expert Labs Documentation
 ---
