@@ -196,36 +196,36 @@ By changing the value for the `server=secure-file-storage` to localhost, it was 
 #### [Back to top](#contents)
 
 ---
-### OWASP Broken Access Control
+## OWASP Broken Access Control
 
 ![bac](./assets/images/broken_access.png)
 
 Access control is implemented to ensure that only authorized users have acces to resources. It can be implemented in different ways, common mechanisms include:
 
-#### DAC - Discretionary Access Control
+### DAC - Discretionary Access Control
 
 **What:** The resource owner determines who is allowed to access a resource and what actions are allowed to be performed. Commonly used in OS and file systems. 
 
-#### MAC - Mandatory Access Control
+### MAC - Mandatory Access Control
 
 **What:** Access to resrouces is determined by a set of predefined rules or policies enforced by the system. Commonly used in highly secure environment, such as govenment and military systems. Only specific individuals with particular security clearances can access certain resources.
 
-#### RBAC - Role Based Access Control
+### RBAC - Role Based Access Control
 
 **What:** Users are assigned roles that define their level of access to resources. Commonly used in enterprise systems, by users with different authority levels (e.g: managers, executives, sales staff, etc).
 
-#### ABAC - Attribute-Based Access Control
+### ABAC - Attribute-Based Access Control
 
 **What:** Access to resources is determined by a sect of attributes, such as a user role, time of day, location, and device. Commonly used in cloud environments and web applications.
 
-#### Common exploits for Broken Access Control:
+### Common exploits for Broken Access Control:
 
     - Horizontal privilege escalation --> accessing resources on same level but across
     - Vertical privilege escalation --> accessing resources higher up
     - Insufficient Access control checks --> Inconsistent access control checks leading to bypassing
     - Insecure direct object references --> Accessing a resource by exploiting a weakness in the control mechanisms, see [here](#idor-challenge)
 
-#### Practical
+### Practical
 
 The web application features a register,login, and dashboard page. When registering, one is forwarded to the login page, and after successfuly logging in, the registration page is shown. Using The BurpSuite Proxy, it's possible to manipulate the `POST` and `GET` requests and proxy them towards the web application. 
 
@@ -233,7 +233,7 @@ By toggling the intercept after succesfully logging in, and setting the `/dashbo
 
 ![bac_flag](./assets/images/bac_flag.png)
 
-#### Mitigation
+### Mitigation
 
 Severa setps can be taken to mitigate Broken Access Control Vulns in PHP applications:
 
@@ -279,19 +279,19 @@ Developers should sanitize and validate user input, and avoid using insecure fun
 #### [Back to top](#contents)
 
 ---
-### Classic DevSecOps pipeline
+## Classic DevSecOps pipeline
 
 
 #### [Back to top](#contents)
 
 ---
-### Cloud-native DevSecOps pipeline
+## Cloud-native DevSecOps pipeline
 
 
 #### [Back to top](#contents)
 
 ---
-### Splunk: Exploring SPL
+## Splunk: Exploring SPL
 ![spl](./assets/images/splunk_spl.png)
 
 Splunk is a powerful `SIEM solution` that provides the ability to search and explore machine data. **Search Processing Language (SPL)** is used to make the search more effective. It comprises various functions and commands used together to form complex yet effective search queries.
@@ -308,13 +308,13 @@ Splunk is a powerful `SIEM solution` that provides the ability to search and exp
 
 5) **Field Sidebar:** has two sections showing selected fields and interesting fields. Also provides quick results, such as top values and raw values against each field. Contains categories such as: `Interesting fields`, `Selected fields`, `Alpha-numeric fields` (that the field contains text values), `Numeric Fields '#'`, `Count`.
 
-#### Practical
+### Practical
 
 Index being used: `index=Windowslogs`
 
 Time stamps being applie: `4/15/22 8:05:00.000 AM - 4/15/22 8:06:00.000 AM`
 
-#### SPL Operators
+### SPL Operators
 
 | Field Name               | Operator                          | Example                   |
 |--------------------------|-----------------------------------|---------------------------|
@@ -332,7 +332,7 @@ Time stamps being applie: `4/15/22 8:05:00.000 AM - 4/15/22 8:06:00.000 AM`
 
 **Example 2:** `index=windowslogs AccountName !=SYSTEM AND AccountName=James`
 
-#### Practical
+### Practical
 
 Used queries:
 
@@ -343,7 +343,7 @@ Used queries:
     - index=windowslogs | table _time EventID Hostname SourceName | reverse
     - index=windowslogs | fields + host + User + SourceIp
 
-#### Filtering
+### Filtering
 
 |  Command  |           Example           |                                    Explanation                                    |
 |:---------:|:---------------------------:|:---------------------------------------------------------------------------------:|
@@ -362,7 +362,7 @@ Used queries:
 | chart     | chart count by User         | Used to transform the data into tables or visualizations                          |
 | timechart | timechart count by Image    | Returns the time series chart covering the field. Often combined with STATS       |
 
-#### Stats
+### Stats
 
 | Command | Explanation                                               | Syntax                            | Example                  |
 |---------|-----------------------------------------------------------|-----------------------------------|--------------------------|
@@ -375,13 +375,13 @@ Used queries:
 #### [Back to top](#contents)
 
 ---
-### Microsoft Sentinel Lab
+## Microsoft Sentinel Lab
 
 
 #### [Back to top](#contents)
 
 ---
-### Intro to Endpoint Security
+## Intro to Endpoint Security
 ![endpoint_sec](./assets/images/endpoint_sec.png)
 
 This room gives an overview of determining a malicious activity from an endpoint and mapping its related events. The room covers:
@@ -390,7 +390,7 @@ This room gives an overview of determining a malicious activity from an endpoint
 * Endpoint Logging and Monitoring
 * Endpoint Log Analysis
 
-#### Core Windows Processes
+### Core Windows Processes
 Some core windows processes can be monitored with `Task Manager`, some of the normal running processes are:
 Note: ">" symbol represents a parent-child relationship. `System (Parent) > smss.exe (Child)`
 
@@ -404,7 +404,7 @@ Note: ">" symbol represents a parent-child relationship. `System (Parent) > smss
     - winlogon.exe
     - explorer.exe
 
-#### Sysinternals
+### Sysinternals
 Sysinternal tools are a compilation of over 70+ windows-based tools. The most used tools are `TCPView` and `Process Explorer`, but others include:
 
     - File and Disk Utilities
@@ -418,24 +418,24 @@ Sysinternal tools are a compilation of over 70+ windows-based tools. The most us
 
 **Process Explorer:** Consists of two windows; the top window show currently active processes, and the bottom window depends on the mode that the eplorer is in. In `handle`, the handles that the selected processes have openend will be displayed, in `DLL` mode, the DLL's and moemory-mapped files are visible.
 
-#### Windows Event Logs
+### Windows Event Logs
 Event log data can be translated into XML using the Windows API. The events in these files are stored in a proprietary binary format with a `.evt` or `.evtx` extension, which typically reside in `C:\Windows\System32\winevt\Logs`. The three main ways of accessing these event logs are through:
 
 * **Event Viewer** (GUI)
 * **Wevtutil.exe** (CLI)
 * **Get-WinEvent** (PS1)
 
-#### Sysmon
+### Sysmon
 Is a tool commonly used by enterprises as part of their monitoring solutions. Sysmon is similar to Windows Event Logs but with more detail. It gathers logsand identifies anomalies, which makes it suitable for `SIEM`. Lastly, `Sysmon` includes 27 types of EventID's, which can be used within the required configuration files to specify how events should be handled and analyzed. 
 
-#### OSQuery
+### OSQuery
 An Open-Source tool created by Facebook. Security Analysts, Incident Responders, and Threat Hunters can query an endpoint (or multiple) using `SQL`. Compatible with Windows, Linux, macOS, FreeBSD. `osqueryi` is the CLI command to get started. An example command would be:
 
 ```sql
 select pid,name,path from processes where name='lsass.exe';
 ```
 
-#### Wazuh
+### Wazuh
 Wazuh is an open-source, freely-available, scalable, and extensive EDR solution. It operates on a management and agent model where a dedicated manager device is responsible for managinhg installed agents on other devices. And EDR (Endpoint detection and response) tool can typically:
 
 * Audit a device for common vulnerabilities
@@ -443,10 +443,10 @@ Wazuh is an open-source, freely-available, scalable, and extensive EDR solution.
 * Visualize complex data
 * Record a device's normal oeprating behaviour
 
-#### Event Correlation
+### Event Correlation
 Identifies significant relationships from multiple log sources, such as application logs, endpoint logs, and network logs. For example, a network connection log may exist in various log sources such as Sysmon logs (Event ID 3: Network Connection) and Firewall Logs. Event Correlation can help to connect the dots in an incident investigation.
 
-#### Baselining
+### Baselining
 The process of knowing whats is expected to be normal. It requires a vast amount of data gatherin to establish the standard behaviour of user activities and netowk traffic.
 
 In conclusion, this room covers the basic concepts of Endpoint Security Monitoring:
@@ -458,7 +458,7 @@ In conclusion, this room covers the basic concepts of Endpoint Security Monitori
 #### [Back to top](#contents)
 
 ---
-### Wazuh
+## Wazuh
 ![wazuh](./assets/images/wazuh.png)
 
 Wazuh operates on a management and agent model where the manager is responsible for managing agents installed on the devices you’d like to monitor. Devices that records the events and processes of a systems are called agents, and offload these to the manager (Wazuh)
@@ -479,7 +479,7 @@ Wazuh alert logs are typically stored in `/var/ossec/logs/alerts/alerts.log`, an
 
 We can use the Wazuh agent to aggregate these events recorded by Sysmon for processing to the Wazuh manager. We can use the Wazuh agent to aggregate these events recorded by Sysmon for processing to the Wazuh manager. Sysmon uses rules that are made in XML formatting to be triggered, so `Sysmon64.exe -accepteula -i detect_powershell.xml` needs to be executed to set yp the configuration.
 
-#### Linux
+### Linux
 Wazuh comes with many rules that enable Wazuh to analyze log files and can be found in /var/ossec/ruleset/rules. Some common applications include:
 
     Docker
@@ -492,7 +492,7 @@ Wazuh comes with many rules that enable Wazuh to analyze log files and can be fo
 
 However, you can always make your own rules. In the room task, Wazuh digests Apache2 logs using the `0250-apache_rules.xml` ruleset.
 
-#### Auditing Commands
+### Auditing Commands
 Wazuh utilizes the `auditd` package, which monitors the system for certain events and writes this to a log file. To install:
 
 ```sh
@@ -504,7 +504,7 @@ sudo auditctl -R /etc/audit/rules.d/audit.rules
 
 The rules are located in `/etc/audit/rules.d/audit.rules`
 
-#### Using your own Client
+### Using your own Client
 
 The Wazuh API allows interaction with the management server. Some initial setup has to be done for this:
 
@@ -521,7 +521,7 @@ To interact with an agent:
 curl -k -X GET "https://10.10.120.12:55000/agents?pretty=true&offset=1&limit=2&select=status%2Cid%2Cmanager%2Cname%2Cnode_name%2Cversion&status=active" -H "Authorization: Bearer $TOKEN"
 ```
 
-#### Reports and Sample Data
+### Reports and Sample Data
 Reports can be generated under `Wazuh --> Modules --> Security Events --> Generate Report`, and these can be downloaded afterwards. 
 
 Sample Data can be loaded into Wazuh under `Wazuh --> Settings --> Sample Data --> Add Data`
@@ -529,7 +529,7 @@ Sample Data can be loaded into Wazuh under `Wazuh --> Settings --> Sample Data -
 #### [Back to top](#contents)
 
 ---
-### Active Directory Basics
+## Active Directory Basics
 ![ad_basics](./assets/images/winadbasics.png)
 
 Microsoft's Active Directory is the backbone of the corporate world. It simplifies the management of devices and users within a corporate environment. A Windows domain is a group of users and computers under the administration of a given business. The main idea behind a domain is to centralise the administration of common components of a Windows computer network in a single repository called Active Directory (AD). The server that runs the Active Directory services is known as a Domain Controller (DC).
@@ -561,7 +561,7 @@ The core of any Windows domain is the `Active Directory Domain Service (ADDS)`.
 
 **OU's** are handy for `applying policies` to users and computers, specific for role-based purposes. **SG's** are used to `grat permissions over resources`
 
-#### Practical
+### Practical
 
 **Delegating Control** in AD to a specific OU can be done in 
 
@@ -574,7 +574,7 @@ Set-ADAccountPassword sophie -Reset -NewPassword (Read-Host -AsSecureString -Pro
 Set-ADUser -ChangePasswordAtLogon $true -Identity sophie -Verbose
 ```
 
-#### Managing Computers in AD
+### Managing Computers in AD
 
 Generally it is advised to divide the devices into three different categories:
 
@@ -582,7 +582,7 @@ Generally it is advised to divide the devices into three different categories:
     * Servers
     * Domain Controllers
 
-#### Group Policies
+### Group Policies
 
 The idea is to deplo different policies for each OU individually. These policies are managed through `Group Policy Objects (GPO)`. The name of the network share that distributes GPOs to domain machines is the `SYSVOL` volume. 
 
@@ -591,7 +591,7 @@ When using Windows domains, all credentials are stored in the Domain Controllers
     - Kerberos: default
     - NetNTLM: legacy
 
-#### Kerberos
+### Kerberos
 The user sends their username and a timestamp encrypted using a key derived from their `Key Distribution Center (KDC)`. The KDC will create and send back a `Ticket Granting Ticket (TGT)`, along with a `Session Key`. It is essential to know that the encrypted TGT includes a copy of the Session Key as part of its contents, and the KDC has no need to store the Session Key as it can recover a copy by decrypting the TGT if needed.
 
 When a user wants to connect to a service, they will use the TGT to receive a `Ticket Granting Service (TGS)`. To request a TGS, the user will send their username and a timestamp encrypted using the Session Key, along with the TGT and a `Service Principal Name (SPN)`, which indicates the service and server name we intend to access.
@@ -602,38 +602,131 @@ The TGS can then be sent to the desired service to authenticate and establish a 
 
 ![kerberos](./assets/images/kerberos.png)
 
-#### NetNTLM
+### NetNTLM
 
 ![netntlm](./assets/images/netntlm.png)
 
-#### Trees Forests, and Trust Relationships
+### Trees Forests, and Trust Relationships
 
 Having multiple domains organised in trees and forest allows a compartmentalised network in terms of management and resources. If a domain in one tree wants access to a domain in another tree, a `trust relationship` has to be made first. These relationships can either be `one-way` or `two-way`. 
 
 #### [Back to top](#contents)
 
 ---
-### Enumerating Active Directory
+## Enumerating Active Directory
 
 #### [Back to top](#contents)
 
 ---
-### Active Directory Hardening
+## Active Directory Hardening
+![ad_hardening](./assets/images/ad_hardening.png)
+
+Active Directory is widely used by almost every big organization. Some techniques that can be implemented to harden AD security include:
+
+    - Secure authentication methods
+    - Securing hosts through group policies
+    - Implementing the Least Privilege model
+    - Protection against known AD attacks
+    - Havig a Recovery Plan (Post-compromise scenario)
+
+To expand a little on trust relationship from AD basics (above), AD trust is the established communication bridhe between the domains in Active Directory. One and Two-way sharing are trusts based on directions, and transitive trusts and non-transitive trusts are trusts based on characteristics:
+
+![ad_trusts](./assets/images/ad_trusts.png)
+
+Transitive trusts reflects a two-way relationship between domains. To access the AD trust on a WIndows Server, it can be found via:
+
+```
+Server Manager --> Tools --> Active Directory Domains and Trust --> *.loc
+```
+
+#### Containers and Leaves
+Each network part is treated as an object in AD. Anything from resources, users, services, or part of the network can be an object. When an object holds another object, it's called a container, otheriwse, it's called a `leaf object`.
+
+### Securing Authentication Methods
+
+#### LAN Hash Manager
+User account passwords are stored with 2 types of hash representation. When the password for any user account is changed or set with fewer than 15 chars, both LAN Manager hash (LM) and NT hash are generated and can be stored in AD. The LM hash is mroe prone to brute force attacks. To disable LM hashing:
+
+```
+GP MGMT Editor --> Computer Configuration --> Policies --> Windows Settings --> Security Settings --> Local Policies --. Security Options --> Network Security --> "Do not store LM hash ..." --> Define policy setting
+```
+
+#### SMB Signing
+`SMB` stands for `Server Message Block`, generally used as a file and print communication protocol, which allows secure transmission over a network. SMB signing through GPO is crucial for `detecting MiTM` attacks. To enable:
+
+```
+GPO MGMT Editor --> Computer Configuration --> Policies --> Windows Settings --> Security Settings --> Local Policies --. Security Options --> Microsoft Network Server: Digitally sign communication (always) --> Enable
+```
+
+#### LDAP Signing
+`Light Weight Directory Access Protocol` enables locating and authenticating resources on the network. LDAP is a `Simple Authentication and Security Layer (SASL)` property that only accepts signed requests and ignores other plain-text or non-SSL requests. To enable:
+
+```
+GPO MGMT Editor --> Computer Configuration --> Policies --> Windows Settings --> Security Settings --> Local Policies --. Security Options --> Domain Controller: LDAP server signing requirements --> Require
+```
+
+#### Password Rotation
+Password Rotation can be achieved with either:
+
+* A script
+* MFA
+* PR through `Group managed Services Accounts (gMSAs)`, which forces password changes every 30 days.
+
+#### Password Policies
+To set a password policy:
+
+```
+GP MGMT Editor > Computer Configuration > Policies > Windows Settings > Security Settings > Account Policies > Password Policy
+```
+
+The options:
+* Enforce password history: prevent at least 10 to 15 old pwds from being used
+* Minimum password length
+* Complexity requirements
+
+### Least Privilege
+Implementing the least privilege model requires limiting the user or application access to minimise security risks and attack surfaces. This can be done in different ways:
+
+* **Creating the Right Type of Accounts:**
+    Different account types could be `User` accounts, `Privilege` accounts, and `Shared` accounts, with each their own level of privilege, depending on what is strictly necessary for those accounts.
+
+* **RBAC on Hosts**
+    RBAC allows to delegate access privileges at different levels. It includes a `DNS zone`, server, or resource records levels.
+
+* **Tiered Access Model**
+    The `AD Tiered Access Model (TAM)` comprises of technical controls that reduce privilege escalation risks. The Tiers include:
+
+        - Tier 0: Top level, includes DC and admin accounts
+        - Tier 1: Domain member applications and servers
+        - Tier 2: End-users and non-IT personel
+
+### Microsoft Security Compliance Toolkit
+The `MSCT` is a toolkit to implement and manage local and domain-level policies. MSCT can be downloaded, and the baselines and policies can be found at `Desktop --> Scripts`. One of the features in the Toolkit is a Policy Analyser which allows compairson of GPOs to check inconsistencies, redundant settings, or alterations. 
+
+### Protecting against known Attacks
+Common techniques that compromise AD security include but are not limited to:
+
+* **Kerberoasting**
+    The attacker exploits Kerberos Ticket Granting Service (TGS) to request an encrypted password, and then the attacker cracks it offline through various brute force techniques. To prevent the attack,ensure an additional layer of authentication through MFA is present or by frequent and periodic Kerberos Key Distribution Centre (KDC) service account password resets. 
+
+* Weak and Easy to Guess Passwords
+* Brute Forcing RDP
+* Publicly Accessible Shares
 
 #### [Back to top](#contents)
 
 ---
-### NTLM leak via Outlook
+## NTLM leak via Outlook
 
 #### [Back to top](#contents)
 
 ---
-### CVE-2022-26923 AD Certificate Services
+## CVE-2022-26923 AD Certificate Services
 
 #### [Back to top](#contents)
 
 ---
-### AttacktiveDirectory
+## AttacktiveDirectory
 
 The Kerberos flow is explained [here](#kerberos).
 
