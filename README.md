@@ -1,4 +1,5 @@
 <img src="./assets/images/banner.png" alt="banner" width="100%"/>
+[09/11/23: Industrial and Commercial Bank of China dealing with LockBit ransomware attack](https://therecord.media/icbc-dealing-with-ransomware-attack)
 
 # Security Expert Labs Documentation
 ---
@@ -202,19 +203,19 @@ By changing the value for the `server=secure-file-storage` to localhost, it was 
 
 Access control is implemented to ensure that only authorized users have acces to resources. It can be implemented in different ways, common mechanisms include:
 
-### DAC - Discretionary Access Control
+#### DAC - Discretionary Access Control
 
 **What:** The resource owner determines who is allowed to access a resource and what actions are allowed to be performed. Commonly used in OS and file systems. 
 
-### MAC - Mandatory Access Control
+#### MAC - Mandatory Access Control
 
 **What:** Access to resrouces is determined by a set of predefined rules or policies enforced by the system. Commonly used in highly secure environment, such as govenment and military systems. Only specific individuals with particular security clearances can access certain resources.
 
-### RBAC - Role Based Access Control
+#### RBAC - Role Based Access Control
 
 **What:** Users are assigned roles that define their level of access to resources. Commonly used in enterprise systems, by users with different authority levels (e.g: managers, executives, sales staff, etc).
 
-### ABAC - Attribute-Based Access Control
+#### ABAC - Attribute-Based Access Control
 
 **What:** Access to resources is determined by a sect of attributes, such as a user role, time of day, location, and device. Commonly used in cloud environments and web applications.
 
