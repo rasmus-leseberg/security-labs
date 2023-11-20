@@ -1,6 +1,6 @@
 <img src="./assets/images/banner.png" alt="banner" width="100%"/>
 
-[09/11/23: Industrial and Commercial Bank of China dealing with LockBit ransomware attack](https://therecord.media/icbc-dealing-with-ransomware-attack)
+[💡 09/11/23: Industrial and Commercial Bank of China dealing with LockBit ransomware attack 💡](https://therecord.media/icbc-dealing-with-ransomware-attack)
 
 # Security Expert Labs Documentation
 ---
