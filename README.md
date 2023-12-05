@@ -19,7 +19,7 @@
 11. ✅ [Active Directory Hardening](#active-directory-hardening)
 12. ✅ [NTLM leak via Outlook](#ntlm-leak-via-outlook)
 13. ✅ [CVE-2022-26923 AD Certificate Services](#cve-2022-26923-ad-certificate-services)
-14. [AttacktiveDirectory](#attacktivedirectory)
+14. ✅ [Attacktive Directory](#attacktivedirectory)
 
 ---
 ## OWASP Top 10 2021
@@ -926,8 +926,66 @@ Additionally, one could restrict certificates further, or restricting enrolment 
 #### [Back to top](#contents)
 
 ---
-## AttacktiveDirectory
+## Attacktive Directory
+![attactive_directory](./assets/images/attacktive_d.png)
 
 The Kerberos flow is explained [here](#kerberos).
+
+### Practical
+
+#### Dependencies
+The tools needed for this room are Impacket, Bloodhound, and Neo4j
+
+```sh
+#Install impacket
+
+sudo git clone https://github.com/SecureAuthCorp/impacket.git /opt/impacket
+sudo pip3 install -r /opt/impacket/requirements.txt
+cd /opt/impacket/ 
+sudo pip3 install .
+sudo python3 setup.py install
+```
+
+For Bloodhound and neo4j:
+
+```sh
+apt install bloodhound neo4j
+apt update && apt upgrade
+```
+
+#### Enumeration
+Nmap is a common yet complex utility that detects what ports or services are open on a device, it can even detect what OS is running. To enumerate SMB a great tool to use is enum4linux. The tool can be used with:
+
+`enum4linux <targetIP`
+
+#### Abusing Kerberos
+
+Other useful information gathered through the nmap results: TLD stands for `Top Level Domain`. It's also shown that Kerberos is running, and with this port open, a tool called `Kerbrute` can be used to brute force discovery of users and passwords. The command `userenum` can be used to enumarate valid usernames. It can be used like:
+
+`kerbrute userenum -dc <target-ip> -d <domain> userlist.txt` <-- similar to a rockyou.txt
+
+#### Retrieving 
+After the enumeration of user accounts is finished, it can be attempted to abuse a feature within Kerberos with an attack method called `ASREPRoasting`. ASReproasting occurs when a user account has the privilege "**Does not require Pre-Authentication**" set. This means that the account does not need to provide valid identification before requesting a Kerberos Ticket on the specified user account.
+
+A command can be used to test whether an account can query a ticket without a password:
+
+```sh 
+python GetNPUsers.py -no-pass -usersfile ./users.txt -dc-ip <target ip> spooky.local/
+```
+Since a hash is returned, the hash can be identified against the hashcat wiki, and finally cracked using hashcat itself:
+
+```sh
+hashcat -m 18200 hash.txt passwordlist.txt
+```
+With access to the user's account credentials, it's possible to enumerate other shares that the domain controller may be giving out, such as `SMB` shares, that can be mapped with `smbclient -L <target ip> -U svc-admin`.
+
+#### Escalating Privileges within the Domain
+The 'backup' account found earlier whilst enumarating could be the backup account of the Domain Controller.Using impacket, `secretsdump.py` allows for retrieval of password hashes, effectively allowing takeover of the AD Domain. The method that allows dumping of NTDS.DIT is `DRSUAPI`, and `pass the hash` could allow us to authenticate without having a password. A Pass-the-Hash (PtH) attack is a technique where an attacker captures a password hash (as opposed to the password characters) and then passes it through for authentication and lateral access to other networked systems. 
+
+`Evil-WinRM`: WinRM (Windows Remote Management) is the Microsoft implementation of WS-Management Protocol. A standard SOAP based protocol that allows hardware and operating systems from different vendors to interoperate. To use it with a command:
+
+```sh
+evil-winrm -i <target ip> -u Administrator -H <hash>
+```
 
 #### [Back to top](#contents)
