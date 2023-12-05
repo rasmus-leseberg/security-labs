@@ -18,7 +18,7 @@
 10. [Enumerating Active Directory](#enumerating-active-directory)
 11. ✅ [Active Directory Hardening](#active-directory-hardening)
 12. ✅ [NTLM leak via Outlook](#ntlm-leak-via-outlook)
-13. [CVE-2022-26923 AD Certificate Services](#cve-2022-26923-ad-certificate-services)
+13. ✅ [CVE-2022-26923 AD Certificate Services](#cve-2022-26923-ad-certificate-services)
 14. [AttacktiveDirectory](#attacktivedirectory)
 
 ---
@@ -811,6 +811,38 @@ Other Mitigation techniques include:
 
 ---
 ## CVE-2022-26923 AD Certificate Services
+![cve-2022](./assets/images/cve_2022.png)
+
+`CVE-2022-26923` is a Microsoft AD Certificate Service vulnerability that allows any AD user to escalate their privileges to Domain Admin in a single hop. Research done and released as a *whitepaper* by [SpecterOps](https://specterops.io/about/) showed that it was possible to exploit misconfigured certificate templates for privilege escalation and lateral movement.
+
+`AD CS` is Miscrosoft's Public Key Infrastructure (PKI) Implementation. It can be used as a CA to prove and delegate trust. AD CS is used for several things, such as:
+
+    - encrypting file systems
+    - creating and verifying digital signatures
+    - user authentication
+
+What makes this CVE an attractive attack vector, is that certificates can survive credential rotation, meaning that persistent credential theft can be possible for up to 10 years.
+
+![ca_server](./assets/images/ca_server.png)
+
+Relevant terminology:
+
+**PKI** - Public Key Infrastructure is a system that manages certificates and public key encryption
+**AD CS** - Active Directory Certificate Services is Microsoft's PKI implementation which usually runs on domain controllers
+**CA** - Certificate Authority is a PKI that issues certificates
+**Certificate Template** - a collection of settings and policies that defines how and when a certificate may be issued by a CA
+**CSR** - Certificate Signing Request is a message sent to a CA to request a signed certificate
+**EKU** - Extended/Enhanced Key Usage are object identifiers that define how a generated certificate may be used
+
+### CVE-2022-26923 explained
+AD usually runs on selected domain controllers, where certificate templates (created by AD CS admins) determine which user can request certificates and what is required for that to happen. Client Authentication allows owner of a certificate to verify their identity in AD.
+
+If we have a valid certificate that has the Client Authentication EKU, we can interface with AD CS and the Key Distribution Centre to request a Kerberos TGT that can then be used for further authentication. 
+
+#### Default Domain Certificate Templates
+
+Default domain certificate templates are either `User Certifcate Templates` or `Machine Certificate Templates`, which are not vulnerable by default.
+
 
 #### [Back to top](#contents)
 
