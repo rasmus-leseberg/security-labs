@@ -8,7 +8,7 @@
 
 1. ✅ [OWASP Top 10 2021](#owasp-top-10-2021)
 2. ✅ [OWASP Broken Access Control](#owasp-broken-access-control)
-3. [Classic DevSecOps pipeline](#classic-devsecops-pipeline)
+3. ✅[Classic DevSecOps pipeline](#classic-devsecops-pipeline)
 4. [Cloud-native DevSecOps pipeline](#cloud-native-devsecops-pipeline)
 5. ✅ [Splunk: Exploring SPL](#splunk-exploring-spl)
 6. [Microsoft Sentinel Lab](#microsoft-sentinel-lab)
@@ -283,11 +283,92 @@ Developers should sanitize and validate user input, and avoid using insecure fun
 ---
 ## Classic DevSecOps pipeline
 
+Infrastructure:
+* Ubuntu 18.04 Server as VirtualBox VM
+* Jenkins installation with:
+
+```
+wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+sudo apt update
+sudo apt install jenkins
+sudo systemctl start jenkins
+sudo ufw allow 8080
+sudo ufw allow OpenSSH
+```
+Why Jenkins?
+
+Jenkins supports several automation patterns. It adds a powerful set of automation tools onto Jenkins, supporting use cases that span from simple CI to comprehensive CD pipelines. The advantages of using CICD pipelines is:
+
+* Durability
+* Versatility
+* Extensibility
+* Pausability
+
+The pipeline used in the lab:
+```
+pipeline {
+    agent any
+    stages {
+        stage ('Compile Stage') {
+
+            steps {
+                withMaven(maven : 'maven_3_5_0') {
+                    sh 'mvn clean compile'
+                }
+            }
+        }
+        stage ('Testing Stage') {
+
+            steps {
+                withMaven(maven : 'maven_3_5_0') {
+                    sh 'mvn test'
+                }
+            }
+        }
+        stage ('Deployment Stage') {
+            steps {
+                withMaven(maven : 'maven_3_5_0') {
+                    sh 'mvn deploy'
+                }
+            }
+        }
+    }
+}
+```
+
+### SuiteCRM & SAST
+SuiteCRM is a Customer Relationship Management tool, which has the following dependencies: PHP, MYSQL, Apache Web Server. `SAST` (Static Application Security Testing) is a process that analyses a projects source code, dependencies, and related files for known security vulnerabilities. 
+
+Other usful plugins installed are for example `Snyk`, an open source security platform for detecting vulnerabilities in the source code of an application. The plugin integration can be added in the pipeline with:
+
+```jenkins
+stage ('Snyk Security'){
+            steps {
+                snykSecurity failOnIssues: false, snykInstallation: 'Snyk Security Plugin', snykTokenId: 'snyk-api-token'
+                sh 'mv snyk_monitor_report.json /var/lib/jenkins/workspace/reports'
+            }    
+        }
+```
+
+### Software Composition Analysis
+SCA is a term for a set of tools that provide users visibility into their inventory. The tools come in different forms and offer different capabilities. The important aspects of SCA tools are:
+
+* Automatically track Open Source Components
+* Continuous Monitoring
+* Automated and Prioritized Vulnerability Remediation
+* License Risk Management
+
+### DAST
+`Dynamic Application Security Testing` is a black-box testing technique in which a DAST tool interacts with a running application, imitating attacker techniques. Unlike static analysis, DAST allows for scans on the client and server-side, without needing the source code or framework that the application is run on. 
+
+The full Jenkinsfile for the Lab can be found in `assets/`
 
 #### [Back to top](#contents)
 
 ---
 ## Cloud-native DevSecOps pipeline
+
 
 
 #### [Back to top](#contents)
