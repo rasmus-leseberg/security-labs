@@ -2,6 +2,8 @@
 
 [💡 09/11/23: Industrial and Commercial Bank of China dealing with LockBit ransomware attack 💡](https://therecord.media/icbc-dealing-with-ransomware-attack)
 
+![lockbit](./assets/images/lockbit.png)
+
 # Security Expert Labs Documentation
 
 ### Contents
