@@ -8,8 +8,8 @@
 
 1. ✅ [OWASP Top 10 2021](#owasp-top-10-2021)
 2. ✅ [OWASP Broken Access Control](#owasp-broken-access-control)
-3. ✅[Classic DevSecOps pipeline](#classic-devsecops-pipeline)
-4. [Cloud-native DevSecOps pipeline](#cloud-native-devsecops-pipeline)
+3. ✅ [Classic DevSecOps pipeline](#classic-devsecops-pipeline)
+4. ✅ [Cloud-native DevSecOps pipeline](#cloud-native-devsecops-pipeline)
 5. ✅ [Splunk: Exploring SPL](#splunk-exploring-spl)
 6. [Microsoft Sentinel Lab](#microsoft-sentinel-lab)
 7. ✅ [Intro to Endpoint Security](#intro-to-endpoint-security)
@@ -305,7 +305,7 @@ Jenkins supports several automation patterns. It adds a powerful set of automati
 * Extensibility
 * Pausability
 
-The pipeline used in the lab:
+The basic pipeline to start with before security implementations:
 ```
 pipeline {
     agent any
@@ -362,14 +362,32 @@ SCA is a term for a set of tools that provide users visibility into their invent
 ### DAST
 `Dynamic Application Security Testing` is a black-box testing technique in which a DAST tool interacts with a running application, imitating attacker techniques. Unlike static analysis, DAST allows for scans on the client and server-side, without needing the source code or framework that the application is run on. 
 
-The full Jenkinsfile for the Lab can be found in `assets/`
+The full Jenkinsfile for the Lab can be found in `assets/workflows/Jenkinsfile`
 
 #### [Back to top](#contents)
 
 ---
 ## Cloud-native DevSecOps pipeline
 
+### What is Cloud Native?
+Cloud-Native means that an application is designed in such a way that it inherits the advantages of cloud along with scaling, agility, and cost-efficiency. The main features are:
 
+* Microservice-based Architecture
+* Containerized Infrastructure
+* CI/CD Development framework
+
+The aim of this lab was to perform SAST on an application through GitHub Actions and generate a report. Source Code Quality Analysis and generating bulls of materials for the application was also part of the scope, along with GitHub Action workflows.
+
+### SAST
+Static Analysis or `Static Application Security Testing` is a testing methodology that analyzes source code to find security vulnerabilities, also known as 'white-box testing'. SAST takes place very early in the software development life cycle (SDLC) as it does not require a working application and can take place without code being executed. 
+
+The SAST workflow and report can be found in the `assets/workflows/SAST-workflow.yaml`
+
+### Code Quality Analysis
+Linting is the automated checking of source code for programmatic and stylistic errors. The workflow file can also be found in `assets/workflows/linting-workflow.yaml`
+
+Other workflow files that were used:
+* ecr-workflow.yaml - to add built images to AWS ECR
 
 #### [Back to top](#contents)
 
