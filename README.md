@@ -15,11 +15,11 @@
 7. ✅ [Intro to Endpoint Security](#intro-to-endpoint-security)
 8. ✅ [Wazuh](#wazuh)
 9. ✅ [Active Directory Basics](#active-directory-basics)
-10. [Enumerating Active Directory](#enumerating-active-directory)
+10. ✅ [Enumerating Active Directory](#enumerating-active-directory)
 11. ✅ [Active Directory Hardening](#active-directory-hardening)
 12. ✅ [NTLM leak via Outlook](#ntlm-leak-via-outlook)
 13. ✅ [CVE-2022-26923 AD Certificate Services](#cve-2022-26923-ad-certificate-services)
-14. ✅ [Attacktive Directory](#attacktivedirectory)
+14. ✅ [Attacktive Directory](#attacktive-directory)
 
 ---
 ## OWASP Top 10 2021
@@ -379,6 +379,8 @@ Used queries:
 ---
 ## Microsoft Sentinel Lab
 
+TODO
+https://github.com/Azure/Azure-Sentinel/tree/master/Solutions/Training/Azure-Sentinel-Training-Lab
 
 #### [Back to top](#contents)
 
@@ -616,6 +618,133 @@ Having multiple domains organised in trees and forest allows a compartmentalised
 
 ---
 ## Enumerating Active Directory
+![ad_enumeration](./assets/images/ad_enumeration.png)
+
+Once AD credentials are somehow obtained, and the means to authenticate them on the network, other things become possible. Usually this leads to privilege escalation or lateral movement to gain additional access. Enumeration and Exploitation therefore go hand in hand. The room will cover the following topics:
+
+* The AD snap-ins of the Microsoft Management Console.
+* The net commands of Command Prompt.
+* The AD-RSAT cmdlets of PowerShell.
+* Bloodhound.
+
+### Credential Injection - Runas
+Runas is a command-line tools built into mostly older Windows Systems (cutoff Windows 8). It can run programs, manage files, access network resources with the security credentials of another user or administrator. 
+
+If there are AD credentials in the form of `:`, it's possible to use Runas (a legitimate Windows binary) to inject credentials into memory. A typical runas command would be: 
+
+`runas.exe /netonly /user:<domain>\<username> cmd.exe`
+
+* **/netonly** - The credentials for network authentication should be loaded, any network connections will occur using the specified account.
+* **/user** - The details of the domain an username. It's always a safe bet to use the FQDN instead of NetBIOS since this will help with resolution. 
+* **/cmd.exe** - The program to execute once credentials are injected. `cmd.exe` is a safe bet, as you can then proceed to launch other commands afterwards. 
+
+Once run, the credentials will not be verified by a DC since using `/netonly`.
+
+### DNS
+Any account can read the contents of `SYSVOL`, a folder that exists on all DC's. It's a shared folder storing the GPOs and information along with any other domain related scripts. It's an essential AD componet since it delivers GPOs to all domain-related computers. Before being able to list SYSVOL, DNS has to be configured. To conifgure DNS manually:
+
+```Powershell
+$dnsip = "<DC IP>"
+$index = Get-NetAdapter -Name 'Ethernet' | Select-Object -ExpandProperty 'ifIndex'
+Set-DnsClientServerAddress -InterfaceIndex $index -ServerAddresses $dnsip
+```
+
+### IP vs. Hostnames
+When providing a hostname, networking authentication will first attempt to use Kerberos authentication. Sinc Kerberos authentication uses hostames embedded in tickets, if an IP is provided, the authentication can be forced to be NTLM. 
+
+### Microsoft Management Console
+The MMC can be used with `Remote Server Administration Tools (RSAT)` AD Snap-Ins. To download:
+
+`Apps & Features --> Manage Optional Features --> Add --> RSAT`
+
+With relevant permissions, it could be possible to make changes directly to AD with MMC the benefits outweigh the disadvantages:
+
+Benefits
+
+* The GUI provides an excellent method to gain a holistic view of the AD environment.
+* Rapid searching of different AD objects can be performed.
+* It provides a direct method to view specific updates of AD objects.
+* If we have sufficient privileges, we can directly update existing AD objects or add new ones.
+
+Drawbacks
+
+* The GUI requires RDP access to the machine where it is executed.
+* Although searching for an object is fast, gathering AD wide properties or attributes cannot be performed.
+
+### Enumerating Through Cmd Prompt & Powershell
+The Cmd Prompt is useful if other tools fail, and can be helpful to embed a couple of simple AD enumeration commands in a phishing payload. The builtin command `net` is a handy tool to enumerate information about the local systm and AD. `group` is a sub-option for `net`, and can be useful for enumeration AD groups, as is `accounts`.
+
+Powershell has all the standard functionality that Cmd Prompt provides, plus access to cmdlets, .NET classes to perform specific functions. Handy enumeration commands used in the lab are:
+
+```Powershell
+PS C:\> Get-ADUser -Identity gordon.stevens -Server za.tryhackme.com -Properties *
+PS C:\>
+PS C:\> Get-ADUser -Filter 'Name -like "*stevens"' -Server za.tryhackme.com | Format-Table Name,SamAccountName -A
+PS C:\>     
+PS C:\> Get-ADGroup -Identity Administrators -Server za.tryhackme.com
+PS C:\>
+PS C:\> Get-ADGroupMember -Identity Administrators -Server za.tryhackme.com
+PS C:\>
+PS C:\> $ChangeDate = New-Object DateTime(2022, 02, 28, 12, 00, 00)
+PS C:\> Get-ADObject -Filter 'whenChanged -gt $ChangeDate' -includeDeletedObjects -Server za.tryhackme.com
+PS C:\>
+PS C:\> Get-ADObject -Filter 'badPwdCount -gt 0' -Server za.tryhackme.com
+PS C:\>
+PS C:\> Get-ADDomain -Server za.tryhackme.com
+
+#AD Objects
+PS C:\>$modifiedDate = Get-Date '2022/02/28'
+PS C:\>Get-ADObject -Filter "whenChanged -ge $modifiedDate" -IncludeDeletedObjects
+
+#Change a User Password
+PS C:\>$oldPass = Read-Host -AsSecureString -Prompt 'Enter the old password'
+PS C:\>$newPass = Read-Host -AsSecureString -Prompt 'Enter the new password'
+PS C:\>Set-ADAccountPassword -Identity user.name -OldPassword $oldpPass -NewPassword $newPass
+```
+
+Benefits
+
+* The PowerShell cmdlets can enumerate significantly more information than the net commands from Command Prompt.
+* We can specify the server and domain to execute these commands using runas from a non-domain-joined machine.
+* We can create our own cmdlets to enumerate specific information.
+* We can use the AD-RSAT cmdlets to directly change AD objects, such as resetting passwords or adding a user to a specific group.
+
+Drawbacks
+
+* PowerShell is often monitored more by the blue teams than Command Prompt.
+* We have to install the AD-RSAT tooling or use other, potentially detectable, scripts for PowerShell enumeration.
+
+### Bloodhound
+Bloodhound is probably the most powerful AD enumeration tool to date, having changed the AD enumeration landscape forever since its release in 2016. 
+
+#### Graph-like thinking
+Bloodhound visualizes AD environments in a graph format with interconnected nodes, ranked in terms of privilege. This graph-based approach allows for a two-stage attack: initial entry via phishing (for example), quick banishment by a hopefully quick responding Blue team, and then a targeted second attack, where the enumeration info from the initial attack was planned out. 
+
+`Sharphound` is the enumeration tool of Bloodhound. It's used to enumerate information to visually display in Bloodhound, where Bloodhound is the GUI. The different collectors are:
+
+* Sharphound.ps1
+* Sharphound.exe
+* AzureHound.ps1
+
+Can be used like this for example: `Sharphound.exe --CollectionMethods <Methods> --Domain za.tryhackme.com --ExcludeDCs`
+
+Parameters explained:
+
+* CollectionMethods - What kind of data Sharphound should collect
+* Domain - The domain to enumerate
+* ExcludeDCs - Not touch DCs, reducing the likelihood of alerting
+
+### Additional Enumeration Techniques
+
+* **LDAP Enumeration** - Any valid AD crdential shoul dbe able to bind to a DC LDAP interface, further allowing querying
+* **PowerView** - Recon script part of the `PowerSploit` project
+* **Windows Management Istrumentation** - A WMI can be used to enumerate info regarding Windows Hosts, with a provider called `root\directory\ldap` that can be used to interact with AD. 
+
+### Mitigations
+
+* AD Enumeration generates log events, and detection rules can be based on this behaviour
+* Signature detection rules must be installed or specific AD enumeration techniques
+* Unless used by employees, Command Prompt and Powershell use can be monitored
 
 #### [Back to top](#contents)
 
